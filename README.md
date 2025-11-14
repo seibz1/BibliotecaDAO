@@ -1,57 +1,43 @@
+📚 CRUD de Usuários para Biblioteca (Java + DAO)
+Este é um projeto de console em Java que demonstra a implementação do padrão DAO (Data Access Object) para conectar a um banco de dados MySQL e gerenciar usuários de uma biblioteca.
 
-# 📚 Sistema de Gerenciamento de Biblioteca (Java + JDBC)
+🏛️ Arquitetura do Projeto
+O código é estruturado para separar as responsabilidades, facilitando a manutenção:
 
-![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-![Pattern](https://img.shields.io/badge/Pattern-DAO-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge)
+Usuario.java (Modelo): Classe POJO que representa a entidade "Usuário", contendo apenas getters e setters para os dados.
 
-Este é um projeto de console em Java que demonstra a implementação do padrão **DAO (Data Access Object)** para gerenciar usuários de uma biblioteca. [cite_start]O sistema se conecta a um banco de dados **MySQL** [cite: 1] e realiza operações **CRUD** (Create, Read, Update) básicas.
+ConnectionFactory.java (Conexão): Classe utilitária responsável por criar e retornar uma conexão com o banco de dados MySQL.
 
-## ✨ Funcionalidades
+UsuarioDAO.java (DAO): A camada de acesso aos dados. Esta classe contém todo o código SQL (CRUD) para manipular os dados dos usuários no banco.
 
-O projeto é focado na camada de persistência de dados e inclui as seguintes operações:
+Biblioteca.java (Principal): Classe executável (main) que simula a camada de aplicação/negócio, utilizando o DAO para realizar operações.
 
-* [cite_start]**Conexão com BD:** Gerencia a conexão com o MySQL usando uma `ConnectionFactory` dedicada[cite: 1].
-* [cite_start]**Adicionar Usuário:** Insere novos usuários no banco de dados (`criaUsuario`)[cite: 3].
-* [cite_start]**Listar Usuários:** Busca e retorna uma lista de todos os usuários cadastrados (`listarUsuarios`)[cite: 3].
-* [cite_start]**Buscar por ID:** Retorna um usuário específico com base no seu ID (`buscarUsuarioPorId`)[cite: 3].
-* [cite_start]**Atualizar Usuário:** Modifica os dados de um usuário existente no banco (`atualizaUsuario`)[cite: 3].
+⚙️ Funcionalidades (Operações CRUD)
+A classe UsuarioDAO implementa as seguintes operações:
 
-## 🛠️ Tecnologias Utilizadas
+criaUsuario(Usuario usuario): Insere um novo usuário na tabela tb_usuarios.
 
-* **Java:** Linguagem principal do projeto.
-* **JDBC (Java Database Connectivity):** API padrão do Java para conexão com bancos de dados.
-* [cite_start]**MySQL:** Sistema de gerenciamento de banco de dados relacional[cite: 1].
-* [cite_start]**Padrão DAO:** Utilizado para separar as regras de negócio da lógica de persistência de dados[cite: 3].
+listarUsuarios(): Retorna uma List<Usuario> com todos os registros da tabela usuarios.
 
-## 📂 Estrutura do Projeto
+buscarUsuarioPorId(int id): Busca e retorna um objeto Usuario específico pelo seu ID.
 
-O projeto está dividido nas seguintes classes principais:
+atualizaUsuario(Usuario usuario): Atualiza as informações de um usuário existente na tabela usuarios.
 
-* `Usuario.java`: Classe de modelo (POJO) que representa a entidade "Usuário", com seus getters e setters.
-* [cite_start]`ConnectionFactory.java`: Classe utilitária responsável por estabelecer e retornar a conexão com o banco de dados MySQL[cite: 1].
-* `UsuarioDAO.java`: O Data Access Object. [cite_start]Esta classe contém todo o código SQL e a lógica para interagir com a tabela de usuários (CRUD)[cite: 3].
-* [cite_start]`Biblioteca.java`: A classe principal (`main`) que serve como ponto de entrada para testar as funcionalidades do DAO (atualmente, testa a busca por ID)[cite: 2].
+🚀 Como Configurar e Executar
+Siga estes passos para rodar o projeto localmente:
 
-## ⚙️ Configuração Essencial
+1. Banco de Dados (MySQL)
+Você precisa ter um servidor MySQL rodando (localhost:3306). Execute o script SQL abaixo para criar o banco de dados e a tabela:
 
-Para executar este projeto, você precisa configurar o ambiente local.
+SQL
 
-### 1. Banco de Dados
-
-[cite_start]É necessário ter um servidor MySQL rodando localmente (`localhost:3306`)[cite: 1].
-
-Execute o seguinte script SQL para criar o banco de dados e a tabela necessários:
-
-```sql
-/* 1. Cria o banco de dados */
+/* 1. Crie o banco de dados */
 CREATE DATABASE db_biblioteca;
 
-/* 2. Seleciona o banco de dados */
+/* 2. Use o banco de dados */
 USE db_biblioteca;
 
-/* 3. Cria a tabela (use 'tb_usuarios' para consistência) */
+/* 3. Crie a tabela (IMPORTANTE: veja a nota sobre 'tb_usuarios' abaixo) */
 CREATE TABLE tb_usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -59,46 +45,29 @@ CREATE TABLE tb_usuarios (
     telefone VARCHAR(20),
     tipo_usuario VARCHAR(50)
 );
-````
 
-### 2\. Credenciais
+/* 4. (Opcional) Insira um usuário para testar a busca */
+INSERT INTO tb_usuarios (nome, email, telefone, tipo_usuario)
+VALUES ('Ana Silva', 'ana.silva@email.com', '11987654321', 'Aluno');
+2. Driver JDBC
+Este projeto requer o MySQL Connector/J. Você deve baixar o arquivo .jar do driver e adicioná-lo ao Build Path (Caminho de Compilação) da sua IDE (Eclipse, NetBeans, IntelliJ, etc.).
 
-[cite\_start]A conexão está configurada para usar as seguintes credenciais em `ConnectionFactory.java`[cite: 1]:
+3. Execução
+Execute o arquivo Biblioteca.java. O método main atual está configurado para tentar buscar o usuário com id = 7.
 
-  * **Usuário:** `root`
-  * **Senha:** `""` (vazia)
+‼️ Correções Necessárias no Código
+Para o projeto funcionar corretamente, duas correções são necessárias nos arquivos de origem:
 
-Ajuste esses valores se a sua configuração do MySQL for diferente.
+Typo na Conexão (ConnectionFactory.java):
 
-### 3\. Driver JDBC
+A URL da conexão está escrita como jbdc:mysql....
 
-Este projeto requer o **MySQL Connector/J**. Você precisa baixar o arquivo `.jar` (driver JDBC) e adicioná-lo ao *build path* (caminho de compilação) do seu projeto na sua IDE (Eclipse, NetBeans, IntelliJ, etc.).
+Correção: Mude para jdbc:mysql....
 
-## ‼️ Pontos de Atenção (Bugs no Código)
+Inconsistência na Tabela (UsuarioDAO.java):
 
-Durante a configuração, observe estes dois problemas presentes nos arquivos de origem que precisam ser corrigidos para o projeto funcionar 100%:
+O método criaUsuario salva dados na tabela tb_usuarios.
 
-1.  **Typo na URL de Conexão:**
+Os métodos listarUsuarios, buscarUsuarioPorId e atualizaUsuario tentam ler da tabela usuarios.
 
-      * [cite\_start]**Arquivo:** `ConnectionFactory.java` [cite: 1]
-      * [cite\_start]**Problema:** A URL está escrita como `jbdc:mysql...`[cite: 1].
-      * **Correção:** Altere para `jdbc:mysql...`
-
-2.  **Inconsistência no Nome da Tabela:**
-
-      * [cite\_start]**Arquivo:** `UsuarioDAO.java` [cite: 3]
-      * [cite\_start]**Problema:** O método `criaUsuario` usa a tabela `tb_usuarios` [cite: 3][cite\_start], enquanto os métodos `listarUsuarios`, `buscarUsuarioPorId` e `atualizaUsuario` usam a tabela `usuarios`[cite: 3].
-      * **Correção:** Padronize todos os métodos para usar o mesmo nome de tabela (o script SQL acima sugere `tb_usuarios`).
-
-## 🚀 Como Executar
-
-1.  Configure o banco de dados (Passo 1).
-2.  Adicione o Driver JDBC ao seu projeto (Passo 3).
-3.  Corrija os "Pontos de Atenção" (acima) nos arquivos `ConnectionFactory.java` e `UsuarioDAO.java`.
-4.  Compile todos os arquivos `.java`.
-5.  [cite\_start]Execute a classe `Biblioteca.java`[cite: 2].
-
-[cite\_start]O `main` atual tentará buscar o usuário com `id = 7` [cite: 2] e imprimir seus dados no console.
-
-```
-```
+Correção: Padronize todos os métodos para usar o mesmo nome de tabela (ex: tb_usuarios, conforme o script SQL acima).
